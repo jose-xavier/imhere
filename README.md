@@ -36,7 +36,7 @@ git clone https://github.com/jose-xavier/imhere.git
 $ npm i
 
 # Run the application with Expo
-$ npm expo start
+$ npx expo start
 
 # You can use your smartphone to test the application. 
 Just download the Expo app and access it through the QR code provided by the command terminal.
