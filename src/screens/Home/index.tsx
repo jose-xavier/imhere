@@ -1,12 +1,41 @@
-import { View, Text, TextInput, TouchableOpacity, FlatList} from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native'
 import { styles } from './styles'
 import { Participant } from '../../components/Participant'
+import { useState } from 'react'
 
 export function Home() {
-    const participants = ['Netto', 'Sabrina','Vitória', 'Luan', 'Michele', 'Douglas']
+    const [ participants, setParticipants ] = useState<string[]>([])
+    const [ participantName, setParticipantName ] = useState('')
+
+    function handleInsertParticipant() {
+        if(!participantName.trim()) {
+            return Alert.alert("Erro", "Digite um nome")
+        }
+
+        const participantNameLowerCase = participantName.toLowerCase()
+
+
+        if(participants.some( name => name.toLocaleLowerCase() === participantNameLowerCase )) {
+            return Alert.alert("Participante existe", `Já existe um participante na lista com esse nome`)
+        }
+
+        setParticipants( prevState => [...prevState, participantName])
+        setParticipantName('')
+    }
 
     function handleRemoveParticipant(name: string) {
-        console.log(`The participant ${name} has been removed`)
+    return Alert.alert("Remover participante", `Tem certeza que deseja remover o participante ${name} da lista?`, [
+        {
+            text: 'sim',
+            onPress: () => setParticipants( prevState => prevState.filter(participant => participant !== name))
+        },
+        {
+            text: 'não',
+            style: 'cancel'
+        }
+    ]
+    
+    )
     }
 
     return (
@@ -24,8 +53,13 @@ export function Home() {
                     style={styles.input}
                     placeholder="Nome do Participante"
                     placeholderTextColor={'#6B6B6B'}
+                    onChangeText={ e => setParticipantName(e)}
+                    value={participantName}
                 />
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity 
+                    style={styles.button}
+                    onPress={handleInsertParticipant}   
+                >
                     <Text style={styles.buttonText}>
                         +
                     </Text>
@@ -39,7 +73,7 @@ export function Home() {
                     <Participant 
                         name={item} 
                         key={item} 
-                        onRemove={() => handleRemoveParticipant("Netto")}
+                        onRemove={() => handleRemoveParticipant(item)}
                     />
                 )}
                 showsVerticalScrollIndicator={false}
